@@ -1,0 +1,21 @@
+{
+  "name": "reddit-save",
+  "version": "0.0.1",
+  "description": "A node app for saving reddit content. (Ex. upvoted, saved, downvoted,etc)",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "reddit",
+    "save",
+    "upvote",
+    "downvote",
+    "snoo"
+  ],
+  "author": "Jacob Beneski",
+  "license": "ISC",
+  "dependencies": {
+    "snoowrap": "^1.14.0"
+  }
+}

@@ -1,0 +1,16 @@
+/**
+ * Created by jacob on 6/5/2017.
+ */
+
+ //Rename to config.js, and fill in blanks.
+
+var config = {
+}
+
+config.userAgent =  ''
+config.clientId = ''
+config.clientSecret = ''
+config.refreshToken = ''
+
+
+module.exports = config;
