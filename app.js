@@ -8,7 +8,7 @@
 // 4) Export filtered data to desired format
 
 const snoowrap = require('snoowrap');
-var argv = require('yargs');
+var argv = require('yargs').argv;
 
 
 
@@ -26,11 +26,18 @@ const reddit = new snoowrap({
 });
 
 
-reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function(saved) {
-    processSaved(saved);
+if(!argv.limit) {
+    console.log('Going Back with No Limit');
+    reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function (saved) {
+        processSaved(saved);
 
-});
-
+    });
+} else {
+    console.log('Limit in place of: ', argv.limit);
+    reddit.getMe().getSavedContent({limit: argv.limit, depth: argv.limit}).then(function (saved) {
+       processSaved(saved);
+    });
+}
 
 
 
