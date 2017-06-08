@@ -8,9 +8,12 @@
 // 4) Export filtered data to desired format
 
 const snoowrap = require('snoowrap');
-const fs = require('fs');
+var argv = require('yargs');
+
+
 
 var config = require('./config');
+var fh = require('./filehelper');
 
 var output = '';
 
@@ -24,6 +27,15 @@ const reddit = new snoowrap({
 
 
 reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function(saved) {
+    processSaved(saved);
+
+});
+
+
+
+
+
+function processSaved(saved){
 
     console.log('Found ', saved.length, 'saved items');
     for(var i = 0; i < saved.length; i++){
@@ -33,37 +45,12 @@ reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function
         line.push(saved[i].url);
         line.push(saved[i].title);
 
-        buildFile(line);
+        fh.buildFile(line);
     }
 
     console.log('Built File');
 
-    writeFile();
-
-
-
-});
-
-function buildFile(input){
-
-    for(i = 0; i < input.length; i++){
-        output += input[i] +  " ";
-    }
-
-    output += "\r\n";
-}
-
-function writeFile(){
-
-    fs.writeFile('output example.txt', output, function(err){
-        if(err){
-            console.error(err);
-        } else {
-            console.log('Wrote file');
-        }
-
-
-    });
-
+    fh.writeFile();
 
 }
+

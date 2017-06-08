@@ -16,6 +16,7 @@
   "author": "Jacob Beneski",
   "license": "ISC",
   "dependencies": {
-    "snoowrap": "^1.14.0"
+    "snoowrap": "^1.14.0",
+    "yargs": "^8.0.1"
   }
 }
