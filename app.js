@@ -18,6 +18,9 @@ var argv = require('yargs')
     .describe('f', 'Format of file to output.')
     .choices('f', ['csv','json','txt','html','excel'])
     .default('f', 'csv')
+    .alias('o', 'output')
+    .describe('o', 'Choose the output location of the file')
+    .default('o', __dirname)
     .argv;
 
 
@@ -96,7 +99,7 @@ function processSaved(saved){
 
 
 
-    fh.writeFile();
+    fh.writeFile(argv.output, argv.name);
 
 }
 

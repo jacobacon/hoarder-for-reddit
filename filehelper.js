@@ -19,13 +19,13 @@ exports.buildFile = function (input)
 
 
 //Writes the file.
-exports.writeFile = function () {
+exports.writeFile = function (location, name) {
 
-    fs.writeFile('saved.txt', output, function (err) {
+    fs.writeFile(location + '\\output.txt', output, function (err) {
         if (err) {
             console.error(err);
         } else {
-            console.log('Wrote file');
+            console.log('Wrote file to: ', location + '\\output.txt');
         }
 
 
