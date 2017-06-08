@@ -8,12 +8,26 @@
 // 4) Export filtered data to desired format
 
 const snoowrap = require('snoowrap');
-var argv = require('yargs').argv;
+var argv = require('yargs')
+    .usage('Usage: $0 <command> [options]')
+    .help('h')
+    .alias('h', 'help')
+    .alias('l', 'limit')
+    .describe('l', 'How far back to go in history.')
+    .alias('f', 'format')
+    .describe('f', 'Format of file to output.')
+    .choices('f', ['csv','json','txt','html','excel'])
+    .default('f', 'csv')
+    .argv;
 
 
 
 var config = require('./config');
 var fh = require('./filehelper');
+
+var Post = require('./Post.js');
+
+var post = new Post('hello', 'world');
 
 var output = '';
 
@@ -56,6 +70,31 @@ function processSaved(saved){
     }
 
     console.log('Built File');
+
+
+    console.log('Post has value: ' , post.title, ' -- ', post.url);
+
+    console.log(post.getPost());
+
+    switch(argv.format) {
+        case 'csv':
+            console.log('Wrote CSV');
+            break;
+        case 'json':
+            console.log('Wrote JSON');
+            break;
+        case 'txt':
+            console.log('Wrote TXT');
+            break;
+        case 'html':
+            console.log('Wrote HTML');
+            break;
+        case 'excel':
+            console.log('Wrote Excel File');
+            break;
+    };
+
+
 
     fh.writeFile();
 
