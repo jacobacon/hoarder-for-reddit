@@ -4,7 +4,6 @@
 
 var Post = class Post{
 
-
     constructor(title, url){
         this.title = title;
         this.url = url;
@@ -15,10 +14,13 @@ var Post = class Post{
       return (this.title + " "+ this.url);
     };
 
+    getTitle(){
+        return this.title;
+    }
 
-
-
-
+    getUrl(){
+        return this.url;
+    }
 
 };
 
