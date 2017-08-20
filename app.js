@@ -13,14 +13,17 @@ var argv = require('yargs')
     .help('h')
     .alias('h', 'help')
     .alias('l', 'limit')
-    .describe('l', 'How far back to go in history.')
-    .alias('f', 'format')
-    .describe('f', 'Format of file to output.')
-    .choices('f', ['csv','json','txt','html','excel'])
-    .default('f', 'csv')
     .alias('o', 'output')
-    .describe('o', 'Choose the output location of the file')
+    .alias('f', 'format')
+    .choices('f', ['csv','json','txt','html','excel'])
+    .alias('n', 'name')
+    .describe('l', 'How far back to go in history.')
+    .describe('o', 'Choose the output location of the file.')
+    .describe('f', 'Format of file to output.')
+    .describe('n', 'The name of the output file.')
     .default('o', __dirname)
+    .default('f', 'csv')
+    .default('n', 'output')
     .argv;
 
 
@@ -30,9 +33,7 @@ var fh = require('./filehelper');
 
 var Post = require('./Post.js');
 
-var post = new Post('hello', 'world');
-
-var output = '';
+//var post = new Post('hello', 'world');
 
 
 const reddit = new snoowrap({
@@ -61,45 +62,25 @@ if(!argv.limit) {
 
 function processSaved(saved){
 
-    console.log('Found ', saved.length, 'saved items');
+    console.log('Found ', saved.length, 'saved items.');
     for(var i = 0; i < saved.length; i++){
 
         var line = [];
 
-        line.push(saved[i].url);
         line.push(saved[i].title);
+        line.push(saved[i].url);
 
-        fh.buildFile(line);
+        fh.buildArray(line);
     }
 
-    console.log('Built File');
+    console.log('Built Array');
 
 
-    console.log('Post has value: ' , post.title, ' -- ', post.url);
+    //console.log('Post has value: ' , post.title, ' -- ', post.url);
 
-    console.log(post.getPost());
+    //console.log(post.getPost());
 
-    switch(argv.format) {
-        case 'csv':
-            console.log('Wrote CSV');
-            break;
-        case 'json':
-            console.log('Wrote JSON');
-            break;
-        case 'txt':
-            console.log('Wrote TXT');
-            break;
-        case 'html':
-            console.log('Wrote HTML');
-            break;
-        case 'excel':
-            console.log('Wrote Excel File');
-            break;
-    };
-
-
-
-    fh.writeFile(argv.output, argv.name);
+    fh.writeFile(argv.output, argv.name, argv.format);
 
 }
 
