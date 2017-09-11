@@ -67,3 +67,14 @@ saved.txt
 *.json
 *.html
 .DS_STORE
+
+#Media Files
+*.txt
+*.csv
+*.json
+*.html
+*.xls
+*.jpg
+*.png
+*.gif
+*.webm
