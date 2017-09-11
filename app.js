@@ -15,17 +15,18 @@ var argv = require('yargs')
     .alias('l', 'limit')
     .alias('o', 'output')
     .alias('f', 'format')
-    .choices('f', ['csv','json','txt','html','excel'])
+    .choices('f', ['csv', 'json', 'txt', 'html', 'excel'])
     .alias('n', 'name')
+    .alias('d', 'download')
     .describe('l', 'How far back to go in history.')
     .describe('o', 'Choose the output location of the file.')
     .describe('f', 'Format of file to output.')
     .describe('n', 'The name of the output file.')
+    .describe('d', 'Download Images')
     .default('o', __dirname)
     .default('f', 'csv')
     .default('n', 'output')
     .argv;
-
 
 
 var config = require('./config');
@@ -44,7 +45,7 @@ const reddit = new snoowrap({
 });
 
 
-if(!argv.limit) {
+if (!argv.limit) {
     console.log('Going Back with No Limit');
     reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function (saved) {
         processSaved(saved);
@@ -53,17 +54,15 @@ if(!argv.limit) {
 } else {
     console.log('Limit in place of: ', argv.limit);
     reddit.getMe().getSavedContent({limit: argv.limit, depth: argv.limit}).then(function (saved) {
-       processSaved(saved);
+        processSaved(saved);
     });
 }
 
 
-
-
-function processSaved(saved){
+function processSaved(saved) {
 
     console.log('Found ', saved.length, 'saved items.');
-    for(var i = 0; i < saved.length; i++){
+    for (var i = 0; i < saved.length; i++) {
 
         var line = [];
 

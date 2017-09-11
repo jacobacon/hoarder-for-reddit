@@ -1,28 +1,39 @@
 /**
  * Created by jacobbeneski on 8/19/17.
  */
-const Scraper = require('image-scraper');
 
+const download = require('image-downloader')
 
-var scraper = new Scraper("http://imgur.com/Yyttsg3");
+const options = {
 
-console.log('Trying to scrape.');
+    url: 'https://fat.gfycat.com/SpitefulFittingBongo.webm',
+    dest: __dirname
 
-
-
-scraper.scrape(function(image){
-
-
-
-    //console.log(image.attributes);
-
-    console.log(image.attributes.address);
+};
 
 
 
-    image.save();
 
 
 
+
+download.image(options)
+    .then(({ filename, image }) => {
+        console.log('File saved to', filename)
+    }).catch((err) => {
+    throw err
 });
 
+
+
+exports.downloadImages = function(items, location){
+
+
+    for(let i = 0; i < items.length; i++){
+
+        if(items[i]);
+
+    };
+    
+
+};

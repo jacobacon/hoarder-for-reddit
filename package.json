@@ -4,7 +4,7 @@
   "description": "A node app for saving reddit content. (Ex. upvoted, saved, downvoted,etc)",
   "main": "app.js",
   "scripts": {
-    "test": "test"
+    "start": "electron ."
   },
   "keywords": [
     "reddit",
@@ -16,6 +16,7 @@
   "author": "Jacob Beneski",
   "license": "ISC",
   "dependencies": {
+    "image-downloader": "^3.2.2",
     "image-scraper": "^0.2.0",
     "snoowrap": "^1.14.0",
     "yargs": "^8.0.1"
