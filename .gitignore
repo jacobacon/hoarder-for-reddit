@@ -61,11 +61,6 @@ typings/
 config.js
 .idea
 *.iml
-saved.txt
-*.txt
-*.csv
-*.json
-*.html
 .DS_STORE
 
 #Media Files
