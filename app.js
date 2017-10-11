@@ -34,10 +34,8 @@ var argv = require('yargs')
     .argv;
 
 
-var config = require('./config');
+//var config = require('./config');
 const fh = require('./filehelper');
-
-var Post = require('./Post.js');
 
 
 let mainWindow;
@@ -52,7 +50,7 @@ let state = 'jacobacon-' + Math.floor(Math.random() * 10000);
 const REDIRECT_URI = 'http://127.0.0.1:3000/auth/reddit/callback';
 const DURATION = 'permanent';
 const SCOPES = ['identity', 'edit', 'history', 'mysubreddits',
-    'privatemessages', 'read','save'];
+    'privatemessages', 'read', 'save'];
 
 
 let authURL = REDDIT_AUTH + '?client_id=' + CLIENT_ID + '&response_type=' + RESPONSE_TYPE +
@@ -62,41 +60,44 @@ let authToken;
 let refreshToken;
 let timeToExpire;
 
+let authCode;
+let callbackServer;
+
 //End Variables
 
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
-       height: 600,
+        height: 600,
         width: 800,
         show: false
     });
 
-    if(!authToken){
+    if (!authToken) {
         //Show Login
         showLogin();
-    } else if(timeToExpire){
+    } else if (timeToExpire) {
         //Refresh Token
-    } else{
+    } else {
+        showApp();
         //Show App
     }
 });
 
+ipcMain.on('get-comments', function () {
+    console.log('Getting Comments');
+
+    getContent();
+});
 
 
-
-
-
-
-
-
-function showLogin(){
+function showLogin() {
     mainWindow.loadURL(authURL);
     mainWindow.show();
 
 
     //Create a server for callback
 
-    http.createServer(function (req, res) {
+    callbackServer = http.createServer(function (req, res) {
         console.log('Request:' + req.method + ' to ' + req.url);
         res.writeHead(200, 'OK');
         res.write('<h1>Recieved callback...</h1>');
@@ -108,8 +109,7 @@ function showLogin(){
 }
 
 
-
-function handleCallback(resp){
+function handleCallback(resp) {
     console.log('We got: ' + resp);
 
     if (resp.includes('error')) {
@@ -118,9 +118,9 @@ function handleCallback(resp){
 
     //console.log('State starts at: ' + resp.indexOf('state') + ' and code starts at: ' + resp.indexOf('code'));
 
-    let returnState = resp.substring(21, 35);
+    let returnState = resp.substring(28, 42);
 
-    let authCode = resp.substring(41);
+    authCode = resp.substring(48);
 
     console.log('State: ' + returnState + ' code: ' + authCode);
 
@@ -129,47 +129,143 @@ function handleCallback(resp){
 
         //TODO Handle this Problem better
     } else {
-        getAuthToken().then(function (result) {
-            console.log(result);
+        getAuthToken(function (err, auth, refresh) {
+
+            if (err) {
+                console.error(err);
+            }
+            //console.log(err, auth, refresh);
+
+            console.log('Showing the app');
+
+            authToken = auth;
+            refreshToken = refresh;
+
+
+            mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+            getContent();
+
+
+            mainWindow.show();
+
+            setTimeout(function () {
+                mainWindow.webContents.send('comment');
+            }, 3000);
+
         });
     }
 
+    callbackServer.close();
 
-    mainWindow.loadURL('file://' + __dirname + '/app/index.html');
-    mainWindow.show();
+
 }
 
 
+function getAuthToken(callback) {
+    let tokenURL = 'https://' + CLIENT_ID + '@www.reddit.com/api/v1/access_token';
+
+    request.post(tokenURL, {
+        form: {
+            grant_type: 'authorization_code',
+            client_id: CLIENT_ID,
+            client_secret: '',
+            code: authCode,
+            redirect_uri: REDIRECT_URI
+        }, headers: {},
+        json: true
+    }, function (err, res, body) {
+        // assert.equal(typeof body, 'object')
+        if (err) {
+
+            callback(err, null, null)
+        } else if (body) {
 
 
+            let string = JSON.stringify(body);
+            let objectValue = JSON.parse(string);
+            console.log('The Access token is: ' + objectValue['access_token']);
 
+
+            let accessToken = objectValue['access_token'];
+            let refreshToken = objectValue['refresh_token'];
+
+            callback(null, accessToken, refreshToken);
+
+        }
+    })
+
+
+}
+
+/*
+ function processJSON(stringValue) {
+ let string = JSON.stringify(stringValue);
+ let objectValue = JSON.parse(string);
+ console.log('The Access token is: ' + objectValue['access_token']);
+
+
+ let accessToken = objectValue['access_token'];
+ let refreshToken = objectValue['refresh_token'];
+
+ }
+
+ */
 
 /*
 
 
 
-const reddit = new snoowrap({
-    userAgent: config.userAgent,
-    clientId: config.clientId,
-    clientSecret: config.clientSecret,
-    refreshToken: config.refreshToken
-});
+ const reddit = new snoowrap({
+ userAgent: config.userAgent,
+ clientId: config.clientId,
+ clientSecret: config.clientSecret,
+ refreshToken: config.refreshToken
+ });
 
 
-if (!argv.limit) {
-    console.log('Going Back with No Limit');
-    reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function (saved) {
-        processSaved(saved);
+ if (!argv.limit) {
+ console.log('Going Back with No Limit');
+ reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then(function (saved) {
+ processSaved(saved);
+
+ });
+ } else {
+ console.log('Limit in place of: ', argv.limit);
+ reddit.getMe().getSavedContent({limit: argv.limit, depth: argv.limit}).then(function (saved) {
+ processSaved(saved);
+ });
+ }
+
+ */
+//TODO Move to helper class
+function getContent() {
+
+    const reddit = new snoowrap({
+        userAgent: 'reddit-downloader',
+        clientId: CLIENT_ID,
+        clientSecret: '',
+        refreshToken: refreshToken,
+        accessToken: authToken
 
     });
-} else {
-    console.log('Limit in place of: ', argv.limit);
-    reddit.getMe().getSavedContent({limit: argv.limit, depth: argv.limit}).then(function (saved) {
-        processSaved(saved);
+
+    let content;
+
+    reddit.getMe().getSavedContent().then((comments) => {
+        //console.log(comments);
+
+        content = comments;
+
+
+        //document.getElementById('content').innerHTML += ('starting ...');
+
     });
+
+
 }
 
-*/
+
 function processSaved(saved) {
 
     console.log('Found ', saved.length, 'saved items.');
@@ -192,5 +288,9 @@ function processSaved(saved) {
 
     fh.writeFile(argv.output, argv.name, argv.format);
 
+}
+
+function showApp() {
+    //TODO
 }
 

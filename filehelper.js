@@ -81,12 +81,12 @@ function builtHtml() {
 
 
     for (let i = 0; i < output.length; i += 2) {
-        outputString += "<tr>";
+        outputString += "/n <tr>";
 
-        outputString += "<th>" + output[i] + "</th>";
-        outputString += "<th>" + '<a href="' + output[i + 1] + '"> ' + output[i + 1] + '</a></th>';
+        outputString += "/n <th>" + output[i] + "</th>";
+        outputString += "/n <th>" + '<a href="' + output[i + 1] + '"> ' + output[i + 1] + '</a></th>';
 
-        outputString += "</tr>";
+        outputString += "/n </tr>";
     }
 
 

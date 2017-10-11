@@ -1,6 +1,6 @@
 {
   "name": "reddit-save",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A node app for saving reddit content. (Ex. upvoted, saved, downvoted,etc)",
   "main": "app.js",
   "scripts": {
@@ -17,7 +17,6 @@
   "license": "ISC",
   "dependencies": {
     "image-downloader": "^3.2.2",
-    "image-scraper": "^0.2.0",
     "request": "^2.83.0",
     "snoowrap": "^1.14.0",
     "yargs": "^8.0.1"
