@@ -6,9 +6,8 @@ const ipcRender = require('electron').ipcRenderer;
 
 document.getElementById('content').innerHTML = "Test";
 
-ipcRender.on('comment', function () {
-    document.getElementById('content').innerHTML += "Hello IPC";
-    window.alert('Hello IPC');
+ipcRender.on('comment',function (event, data) {
+    document.getElementById('content').innerHTML += data;
 });
 
 function getContent() {

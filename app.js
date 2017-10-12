@@ -58,32 +58,54 @@ const SCOPES = ['identity', 'edit', 'history', 'mysubreddits',
 let authURL = REDDIT_AUTH + '?client_id=' + CLIENT_ID + '&response_type=' + RESPONSE_TYPE +
     '&state=' + state + '&redirect_uri=' + REDIRECT_URI + '&duration=' + DURATION + '&scope=' + SCOPES.join(' ');
 
-let authToken;
+let accessToken;
 let refreshToken;
 let timeToExpire;
 
+//Used to get an access token
 let authCode;
 let callbackServer;
+
+let db = level(__dirname + '/.database');
 
 //End Variables
 
 
 app.on('ready', () => {
+
+    if(!accessToken){
+        db.get('accessToken', (err, value) =>{
+            if(err) {
+                console.error('No Valid Access Token, The User Needs to Provide Us Access' + '\n' + err);
+                showLogin();
+            }
+            else{
+                console.log(value);
+                accessToken = value;
+                showApp();
+
+            }
+        });
+
+    }
+
+
+
+
     mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
         show: false
     });
 
-    if (!authCode) {
-        //Show Login
-        showLogin();
-    } else if (timeToExpire) {
+    /*
+     else if (timeToExpire) {
         //Refresh Token
     } else {
         showApp();
         //Show App
     }
+    */
 });
 
 ipcMain.on('get-comments', function () {
@@ -131,28 +153,24 @@ function handleCallback(resp) {
 
         //TODO Handle this Problem better
     } else {
-        getAuthToken(function (err, auth, refresh) {
+        getAccessToken(function (err, access, refresh) {
 
             if (err) {
                 console.error(err);
             }
 
+            db.put('accessToken', access, (err) => {
+                console.error(err);
+            });
+
+            console.log('Stored Access Code in Database');
+
             console.log('Showing the app');
 
-            authToken = auth;
+            accessToken = access;
             refreshToken = refresh;
 
-
-            mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
-
-            getContent();
-
-
-            mainWindow.show();
-
-            setTimeout(function () {
-                mainWindow.webContents.send('comment');
-            }, 3000);
+            showApp();
 
         });
     }
@@ -163,7 +181,7 @@ function handleCallback(resp) {
 }
 
 
-function getAuthToken(callback) {
+function getAccessToken(callback) {
     let tokenURL = 'https://' + CLIENT_ID + '@www.reddit.com/api/v1/access_token';
 
     request.post(tokenURL, {
@@ -247,16 +265,20 @@ function getContent() {
         clientId: CLIENT_ID,
         clientSecret: '',
         refreshToken: refreshToken,
-        accessToken: authToken
+        accessToken: accessToken
 
     });
 
     let content;
 
     reddit.getMe().getSavedContent().then((comments) => {
-        //console.log(comments);
+        console.log(comments);
 
         content = comments;
+
+
+
+        mainWindow.webContents.send('comment', content[0].title);
 
 
         //document.getElementById('content').innerHTML += ('starting ...');
@@ -292,6 +314,18 @@ function processSaved(saved) {
 }
 
 function showApp() {
+
+    mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+
+    getContent();
+
+
+    mainWindow.show();
+
+    setTimeout(function () {
+        mainWindow.webContents.send('comment');
+    }, 3000);
     //TODO
 }
 
