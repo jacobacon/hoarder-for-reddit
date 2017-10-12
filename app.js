@@ -13,6 +13,8 @@ const url = require('url');
 const ipcMain = require('electron').ipcMain;
 const request = require('request');
 const snoowrap = require('snoowrap');
+const level = require('level');
+
 var argv = require('yargs')
     .usage('Usage: $0 <command> [options]')
     .help('h')
@@ -65,6 +67,7 @@ let callbackServer;
 
 //End Variables
 
+
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
         height: 600,
@@ -72,7 +75,7 @@ app.on('ready', () => {
         show: false
     });
 
-    if (!authToken) {
+    if (!authCode) {
         //Show Login
         showLogin();
     } else if (timeToExpire) {
@@ -116,7 +119,6 @@ function handleCallback(resp) {
         console.error('An Error Occured');
     }
 
-    //console.log('State starts at: ' + resp.indexOf('state') + ' and code starts at: ' + resp.indexOf('code'));
 
     let returnState = resp.substring(28, 42);
 
@@ -134,7 +136,6 @@ function handleCallback(resp) {
             if (err) {
                 console.error(err);
             }
-            //console.log(err, auth, refresh);
 
             console.log('Showing the app');
 
