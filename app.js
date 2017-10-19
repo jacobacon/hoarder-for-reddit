@@ -22,6 +22,7 @@ var argv = require('yargs')
     .alias('l', 'limit')
     .alias('o', 'output')
     .alias('f', 'format')
+    .alias('g', 'gui')
     .choices('f', ['csv', 'json', 'txt', 'html', 'excel'])
     .alias('n', 'name')
     .alias('d', 'download')
@@ -30,14 +31,18 @@ var argv = require('yargs')
     .describe('f', 'Format of file to output.')
     .describe('n', 'The name of the output file.')
     .describe('d', 'Download Images')
+    .describe('g', 'Enable or Disable the GUI')
     .default('o', __dirname)
     .default('f', 'csv')
     .default('n', 'output')
+    .default('g', true)
     .argv;
 
 
 //var config = require('./config');
 const fh = require('./filehelper');
+
+//TODO Check if GUI should be enabled.
 
 
 let mainWindow;
@@ -76,6 +81,7 @@ app.on('ready', () => {
     if(!accessToken){
         db.get('accessToken', (err, value) =>{
             if(err) {
+                //TODO Check if AccessToken is Expired.
                 console.error('No Valid Access Token, The User Needs to Provide Us Access' + '\n' + err);
                 showLogin();
             }
@@ -108,10 +114,25 @@ app.on('ready', () => {
     */
 });
 
-ipcMain.on('get-comments', function () {
+ipcMain.on('get-comments', () => {
     console.log('Getting Comments');
 
-    getContent();
+    getContent((err,data) => {
+
+        if(err){
+            console.error(err);
+        } else {
+            mainWindow.webContents.send('set-comments', data);
+
+            console.log(data);
+        }
+
+    });
+});
+
+ipcMain.on('logout', () => {
+    console.log('Logging Out...');
+    logout();
 });
 
 
@@ -127,6 +148,7 @@ function showLogin() {
         res.writeHead(200, 'OK');
         res.write('<h1>Recieved callback...</h1>');
         res.end();
+        //Handle the Callback URL
         handleCallback(req.url);
     }).listen(3000);
     console.log('Ready on port 3000');
@@ -141,7 +163,7 @@ function handleCallback(resp) {
         console.error('An Error Occured');
     }
 
-
+//TODO Change this to use correct URL parsing to prevent the code from being too short sometimes.
     let returnState = resp.substring(28, 42);
 
     authCode = resp.substring(48);
@@ -150,6 +172,7 @@ function handleCallback(resp) {
 
     if (state != returnState) {
         console.error("Returned State Didn't Match Expected. Try to login again");
+        showLogin();
 
         //TODO Handle this Problem better
     } else {
@@ -159,9 +182,13 @@ function handleCallback(resp) {
                 console.error(err);
             }
 
-            db.put('accessToken', access, (err) => {
+
+            db.batch()
+                .put('accessToken', access)
+                .put('expireTime', timeToExpire)
+                .write((err) => {
                 console.error(err);
-            });
+                });
 
             console.log('Stored Access Code in Database');
 
@@ -258,7 +285,7 @@ function getAccessToken(callback) {
 
  */
 //TODO Move to helper class
-function getContent() {
+function getContent(callback) {
 
     const reddit = new snoowrap({
         userAgent: 'reddit-downloader',
@@ -271,17 +298,17 @@ function getContent() {
 
     let content;
 
-    reddit.getMe().getSavedContent().then((comments) => {
-        console.log(comments);
-
-        content = comments;
+    //Gets Saved Content from Reddit
+    reddit.getMe().getSavedContent().then((savedContent) => {
 
 
+        //console.log(savedContent);
 
-        mainWindow.webContents.send('comment', content[0].title);
+        content = savedContent;
+        console.log('Calling Callback');
 
+        callback(null, content);
 
-        //document.getElementById('content').innerHTML += ('starting ...');
 
     });
 
@@ -318,7 +345,9 @@ function showApp() {
     mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
 
 
-    getContent();
+    getContent((err,data) => {
+
+    });
 
 
     mainWindow.show();
@@ -329,3 +358,24 @@ function showApp() {
     //TODO
 }
 
+function logout(){
+
+    db.batch()
+        .del('accessToken')
+        .del('expireTime')
+        .write((err) => {
+        if(err)
+            console.error(err);
+        });
+
+    authCode = null;
+    accessToken = null;
+
+    mainWindow.webContents.session.clearStorageData([], (data) => {
+        console.log('Cleared Login Data');
+    });
+
+    showLogin();
+
+
+}
