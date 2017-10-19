@@ -4,7 +4,8 @@
   "description": "A node app for saving reddit content. (Ex. upvoted, saved, downvoted,etc)",
   "main": "app.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "start-nogui": "electron . -gui=false"
   },
   "keywords": [
     "reddit",
@@ -13,11 +14,16 @@
     "downvote",
     "snoo"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jacobacon/hoarder-for-reddit.git"
+  },
   "author": "Jacob Beneski",
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^3.3.7",
     "image-downloader": "^3.3.0",
+    "jquery": "^3.2.1",
     "level": "^1.7.0",
     "request": "^2.83.0",
     "snoowrap": "^1.14.2",
