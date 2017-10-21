@@ -1,6 +1,6 @@
 {
   "name": "reddit-save",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A node app for saving reddit content. (Ex. upvoted, saved, downvoted,etc)",
   "main": "app.js",
   "scripts": {

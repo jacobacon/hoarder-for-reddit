@@ -75,27 +75,56 @@ let db = level(__dirname + '/.database');
 
 //End Variables
 
-
+//When the app is ready, check access token is valid. Redirect to reddit, refresh or redirect to the app.
 app.on('ready', () => {
 
-    if(!accessToken){
-        db.get('accessToken', (err, value) =>{
-            if(err) {
-                //TODO Check if AccessToken is Expired.
+        //Load the Access Token From the Database
+        db.get('accessToken', (err, access) => {
+
+
+
+
+            //If it is not in DB, redirect the user to reddit login page.
+            if (err) {
                 console.error('No Valid Access Token, The User Needs to Provide Us Access' + '\n' + err);
                 showLogin();
-            }
-            else{
-                console.log(value);
-                accessToken = value;
-                showApp();
+            } else {
+
+                accessToken = access;
+
+
+                db.get('refreshToken', (err, refresh) => {
+
+
+                    if (err) {
+                        console.error('No Refresh Token');
+                    }
+
+                    refreshToken = refresh;
+
+
+
+
+                        if ((accessToken) && (refreshToken)) { //Access token and refresh token both exist.
+                            showApp();
+                        } else if (!refresh) { //Access Token is expired, refresh it.
+                            //TODO Handle expired tokens.
+                            console.log('No Refresh Token, you will need to login again in an hour.');
+                            showApp();
+                        }
+
+
+
+
+
+                });
+
 
             }
+
+
+
         });
-
-    }
-
-
 
 
     mainWindow = new BrowserWindow({
@@ -104,22 +133,14 @@ app.on('ready', () => {
         show: false
     });
 
-    /*
-     else if (timeToExpire) {
-        //Refresh Token
-    } else {
-        showApp();
-        //Show App
-    }
-    */
 });
 
 ipcMain.on('get-comments', () => {
     console.log('Getting Comments');
 
-    getContent((err,data) => {
+    getContent((err, data) => {
 
-        if(err){
+        if (err) {
             console.error(err);
         } else {
             mainWindow.webContents.send('set-comments', data);
@@ -182,20 +203,25 @@ function handleCallback(resp) {
                 console.error(err);
             }
 
+            accessToken = access;
+            refreshToken = refresh;
+            timeToExpire = ((new Date).getTime() / 1000) + 3600;
 
             db.batch()
                 .put('accessToken', access)
+                .put('refreshToken', refresh)
                 .put('expireTime', timeToExpire)
                 .write((err) => {
-                console.error(err);
+                    console.error(err);
                 });
 
             console.log('Stored Access Code in Database');
 
             console.log('Showing the app');
 
-            accessToken = access;
-            refreshToken = refresh;
+
+            console.log('Token Will Expire at: ' + timeToExpire);
+
 
             showApp();
 
@@ -235,6 +261,7 @@ function getAccessToken(callback) {
 
             let accessToken = objectValue['access_token'];
             let refreshToken = objectValue['refresh_token'];
+
 
             callback(null, accessToken, refreshToken);
 
@@ -284,6 +311,7 @@ function getAccessToken(callback) {
  }
 
  */
+
 //TODO Move to helper class
 function getContent(callback) {
 
@@ -345,31 +373,35 @@ function showApp() {
     mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
 
 
-    getContent((err,data) => {
+    getContent((err, data) => {
+        if (err)
+            console.error(err);
+        else {
 
+            mainWindow.webContents.send('set-comments', data);
+
+        }
     });
 
 
     mainWindow.show();
-
-    setTimeout(function () {
-        mainWindow.webContents.send('comment');
-    }, 3000);
-    //TODO
 }
 
-function logout(){
+function logout() {
 
     db.batch()
         .del('accessToken')
+        .del('refreshToken')
         .del('expireTime')
         .write((err) => {
-        if(err)
-            console.error(err);
+            if (err)
+                console.error(err);
         });
 
     authCode = null;
     accessToken = null;
+    refreshToken = null;
+    timeToExpire = null;
 
     mainWindow.webContents.session.clearStorageData([], (data) => {
         console.log('Cleared Login Data');

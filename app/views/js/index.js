@@ -4,15 +4,10 @@
 
 const ipcRender = require('electron').ipcRenderer;
 
-document.getElementById('content').innerHTML = "Test";
-document.getElementById('titleColumn').innerHTML += "Hello World";
-//$('#titleColumn')
-
-ipcRender.on('comment',function (event, data) {
-    document.getElementById('content').innerHTML += data;
-});
 
 ipcRender.on('set-comments', function (event, data) {
+
+    console.log('Event Happened: ' + event);
 
     for(let i =0; i < 5; i++){
         $('#titleColumn').append(data[i].title);
