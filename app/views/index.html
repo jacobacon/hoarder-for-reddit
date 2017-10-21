@@ -5,6 +5,7 @@
     <title>Reddit Saver</title>
 
     <script>window.$ = window.jQuery = require('jquery');</script>
+    <link href="css/app.css" rel="stylesheet">
     <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../../node_modules/jquery/dist/jquery.min.js"></script>
@@ -20,7 +21,7 @@
     <strong>Danger!</strong> This alert box could indicate a dangerous or potentially negative action.
 </div>
 
-<div class="container">
+<div class="container" id="content">
     <div class="row">
         <div class="col-sm-4" id="titleColumn">
             <h3>Title</h3>
@@ -43,10 +44,6 @@
     <button type="button" class='logout-button' onclick="logout()">Logout</button>
 </div>
 
-<div id="content">
-
-
-</div>
 
 <script src="js/index.js">
 </script>
