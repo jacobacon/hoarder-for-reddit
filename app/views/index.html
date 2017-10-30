@@ -21,27 +21,80 @@
     <strong>Danger!</strong> This alert box could indicate a dangerous or potentially negative action.
 </div>
 
-<div class="container" id="content">
-    <div class="row">
-        <div class="col-sm-4" id="titleColumn">
-            <h3>Title</h3>
-            <p>Title Goes Here...</p>
-        </div>
-        <div class="col-sm-4" id="subredditColumn">
-            <h3>Subreddit</h3>
-            <p>Subreddit goes here...</p>
-        </div>
-        <div class="col-sm-4" id="linkColumn">
-            <h3>Link</h3>
-            <p>Link Goes here...</p>
+<!--
+
+<div id="content">
+    <div class="container">
+        <div class="row" id="contentRow">
+            <div class="col-sm-4" id="titleColumn">
+                <h3>Title</h3>
+                <p>Title Goes Here...</p>
+            </div>
+            <div class="col-sm-4" id="subredditColumn">
+                <h3>Subreddit</h3>
+                <p>Subreddit goes here...</p>
+            </div>
+            <div class="col-sm-4" id="linkColumn">
+                <h3>Link</h3>
+                <p>Link Goes here...</p>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="buttons">
+-->
 
-    <button type="button" class='button' onclick="getContent()">Get Comments</button>
-    <button type="button" class='logout-button' onclick="logout()">Logout</button>
+<div class="container" id="content">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <table class="table table-bordered table-hover" id="tab_logic">
+                <thead>
+                <tr>
+                    <th class="text-center">
+                        #
+                    </th>
+                    <th class="text-center">
+                        Name
+                    </th>
+                    <th class="text-center">
+                        Mail
+                    </th>
+                    <th class="text-center">
+                        Mobile
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id='addr0'>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        <input type="text" name='subreddit' placeholder='Name' class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="text" name='title' placeholder='Mail' class="form-control"/>
+                    </td>
+                    <td>
+                        <input type="text" name='url' placeholder='Mobile' class="form-control"/>
+                    </td>
+                </tr>
+                <tr id='addr1'></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a id="add_row" class="btn btn-default pull-left">Add Row</a><a id='delete_row' class="pull-right btn btn-default">Delete
+    Row</a>
+</div>
+
+
+<div id="buttons">
+    <div class="container">
+
+        <button type="button" class='button' onclick="getContent()">Get Comments</button>
+        <button type="button" class='logout-button' onclick="logout()">Logout</button>
+</div>
 </div>
 
 

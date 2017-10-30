@@ -3,7 +3,11 @@ html, body{
 }
 
 #content{
+    height: 40vh;
+    overflow-y: scroll;
+}
+
+#titleColumn {
     overflow: scroll;
-    background-color: aqua;
 }
 
