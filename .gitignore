@@ -75,3 +75,4 @@ config.js
 *.webm
 .database
 !/app/views/*.html
+!package.json
