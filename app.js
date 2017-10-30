@@ -14,6 +14,7 @@ const ipcMain = require('electron').ipcMain;
 const request = require('request');
 const snoowrap = require('snoowrap');
 const level = require('level');
+require('dotenv').config();
 
 var argv = require('yargs')
     .usage('Usage: $0 <command> [options]')
@@ -51,7 +52,7 @@ let mainWindow;
 //TODO move reddit oauth to external module
 
 const REDDIT_AUTH = 'https://www.reddit.com/api/v1/authorize.compact';
-const CLIENT_ID = 'm1h0ltl6XNjJ3g';
+const CLIENT_ID = process.env.CLIENT_ID;
 const RESPONSE_TYPE = 'code';
 let state = 'jacobacon-' + Math.floor(Math.random() * 10000);
 const REDIRECT_URI = 'http://127.0.0.1:3000/auth/reddit/callback';
@@ -186,6 +187,7 @@ function handleCallback(resp) {
 
 //TODO Change this to use correct URL parsing to prevent the code from being too short sometimes.
     let returnState = resp.substring(28, 42);
+
 
     authCode = resp.substring(48);
 
