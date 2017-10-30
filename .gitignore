@@ -66,8 +66,8 @@ config.js
 #Media Files
 *.txt
 *.csv
-*.json
 *.html
+*.json
 *.xls
 *.jpg
 *.png
@@ -76,3 +76,5 @@ config.js
 .database
 !/app/views/*.html
 !package.json
+package-lock.json
+examples
