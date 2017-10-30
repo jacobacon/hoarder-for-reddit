@@ -22,9 +22,12 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "dotenv": "^4.0.0",
     "image-downloader": "^3.3.0",
     "jquery": "^3.2.1",
     "level": "^1.7.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "request": "^2.83.0",
     "snoowrap": "^1.14.2",
     "yargs": "^8.0.2"
