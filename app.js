@@ -150,6 +150,11 @@ ipcMain.on('logout', () => {
     logout();
 });
 
+ipcMain.on('show-settings', () => {
+    console.log('Showing Settings');
+    showSettings();
+});
+
 
 function showLogin() {
     mainWindow.loadURL(authURL);
@@ -360,6 +365,21 @@ function processSaved(saved) {
     //console.log(post.getPost());
 
     fh.writeFile(argv.output, argv.name, argv.format);
+
+}
+
+function showSettings(){
+
+    let settingsWindow = new BrowserWindow({parent: mainWindow, modal: true, show: false});
+
+    settingsWindow.loadURL('https://www.google.com');
+
+    settingsWindow.once('ready-to-show', () => {
+        settingsWindow.show();
+    });
+
+    console.log("Showing Settings")
+
 
 }
 
