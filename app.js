@@ -82,9 +82,6 @@ app.on('ready', () => {
         //Load the Access Token From the Database
         db.get('accessToken', (err, access) => {
 
-
-
-
             //If it is not in DB, redirect the user to reddit login page.
             if (err) {
                 console.error('No Valid Access Token, The User Needs to Provide Us Access' + '\n' + err);
@@ -113,10 +110,6 @@ app.on('ready', () => {
                             console.log('No Refresh Token, you will need to login again in an hour.');
                             showApp();
                         }
-
-
-
-
 
                 });
 
@@ -329,7 +322,7 @@ function getContent(callback) {
     let content;
 
     //Gets Saved Content from Reddit
-    reddit.getMe().getSavedContent().then((savedContent) => {
+    reddit.getMe().getSavedContent({limit: Infinity, depth: Infinity}).then((savedContent) => {
 
 
         //console.log(savedContent);
@@ -372,7 +365,10 @@ function processSaved(saved) {
 
 function showApp() {
 
-    mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+    //mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+    mainWindow.loadURL('file://' + __dirname + '/app/views/loading.html');
+    mainWindow.show();
 
 
     getContent((err, data) => {
@@ -380,13 +376,21 @@ function showApp() {
             console.error(err);
         else {
 
-            mainWindow.webContents.send('set-comments', data);
+            console.log('Got Callback: ');
+
+            mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+
+            setTimeout(() => {
+                console.log('Sending Data');
+                mainWindow.webContents.send('set-comments', data);
+
+            }, 200);
+
+            console.log('Data Was Sent');
 
         }
     });
-
-
-    mainWindow.show();
 }
 
 function logout() {
