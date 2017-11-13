@@ -73,6 +73,7 @@ let authCode;
 let callbackServer;
 
 let db = level(__dirname + '/.database');
+var content;
 
 //End Variables
 
@@ -137,6 +138,7 @@ ipcMain.on('get-comments', () => {
         if (err) {
             console.error(err);
         } else {
+            content = data;
             mainWindow.webContents.send('set-comments', data);
 
             console.log(data);
@@ -153,6 +155,11 @@ ipcMain.on('logout', () => {
 ipcMain.on('show-settings', () => {
     console.log('Showing Settings');
     showSettings();
+});
+
+ipcMain.on('export-content', () => {
+   console.log('Exporting Content');
+   processSaved(content);
 });
 
 
@@ -364,7 +371,8 @@ function processSaved(saved) {
 
     //console.log(post.getPost());
 
-    fh.writeFile(argv.output, argv.name, argv.format);
+
+    fh.writeFile(argv.output, argv.name, 'html');
 
 }
 
@@ -397,6 +405,8 @@ function showApp() {
         else {
 
             console.log('Got Callback: ');
+
+            content = data;
 
             mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
 

@@ -40,6 +40,10 @@ function getContent () {
 
 }
 
+function exportContent(){
+    ipcRender.send('export-content');
+}
+
 function showSettings(){
     ipcRender.send('show-settings');
 }
