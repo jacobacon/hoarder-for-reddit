@@ -23,6 +23,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "dotenv": "^4.0.0",
+    "electron-navigation": "^1.5.3",
     "image-downloader": "^3.3.0",
     "jquery": "^3.2.1",
     "level": "^1.7.0",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "electron": "1.7.9",
-    "electron-rebuild": "^1.6.0"
+    "electron-rebuild": "^1.6.0",
+    "gulp": "^3.9.1"
   }
 }

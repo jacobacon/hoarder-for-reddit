@@ -16,6 +16,8 @@ const snoowrap = require('snoowrap');
 const level = require('level');
 require('dotenv').config();
 
+const saver = require('../image-list-saver/image-saver');
+
 var argv = require('yargs')
     .usage('Usage: $0 <command> [options]')
     .help('h')
@@ -34,7 +36,7 @@ var argv = require('yargs')
     .describe('d', 'Download Images')
     .describe('g', 'Enable or Disable the GUI')
     .default('o', __dirname)
-    .default('f', 'csv')
+    .default('f', 'html')
     .default('n', 'output')
     .default('g', true)
     .argv;
@@ -162,6 +164,26 @@ ipcMain.on('export-content', () => {
    processSaved(content);
 });
 
+ipcMain.on('download-images', ()=> {
+   console.log('Downloading Images');
+
+   let urls = [];
+
+   for(let i = 0; i < content.length; i++){
+       console.log(content[i].url);
+       urls.push(content[i].url);
+   }
+
+   try {
+       saver.download(urls, __dirname + '/downloads', (err, data) => {
+           console.log(err);
+           console.log(data);
+       })
+   } catch (error){
+       console.log(error);
+   }
+
+});
 
 function showLogin() {
     mainWindow.loadURL(authURL);
@@ -367,16 +389,11 @@ function processSaved(saved) {
     console.log('Built Array');
 
 
-    //console.log('Post has value: ' , post.title, ' -- ', post.url);
-
-    //console.log(post.getPost());
-
-
     fh.writeFile(argv.output, argv.name, 'html');
 
 }
 
-function showSettings(){
+function showSettings(){/*
 
     let settingsWindow = new BrowserWindow({parent: mainWindow, modal: true, show: false});
 
@@ -387,6 +404,10 @@ function showSettings(){
     });
 
     console.log("Showing Settings")
+
+    */
+
+    mainWindow.loadURL('file://' + __dirname + '/app/views/imageview.html');
 
 
 }

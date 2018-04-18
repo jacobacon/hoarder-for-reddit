@@ -70,7 +70,7 @@ exports.writeFile = function (location, name, format) {
 
 };
 
-
+//TODO Rewrite this to be better.
 function builtHtml() {
     let outputString = "";
 
@@ -79,14 +79,18 @@ function builtHtml() {
     outputString += "<html>";
     outputString += "<table>";
 
+    let value = 1;
 
     for (let i = 0; i < output.length; i += 2) {
-        outputString += "/n <tr>";
+        outputString += "<tr>";
 
-        outputString += "/n <th>" + output[i] + "</th>";
-        outputString += "/n <th>" + '<a href="' + output[i + 1] + '"> ' + output[i + 1] + '</a></th>';
+        outputString += "<th>" + output[i] + "</th>";
+        outputString += "<th>" + '<a href="' + output[i + 1] + '"> ' + output[i + 1] + '</a></th>';
+        outputString += "<th>" + value.toString() + '</a></th>';
 
-        outputString += "/n </tr>";
+        outputString += "</tr>";
+
+        value++;
     }
 
 

@@ -52,3 +52,8 @@ function logout () {
     ipcRender.send('logout');
 }
 
+function downloadImages() {
+    ipcRender.send('download-images');
+
+}
+
