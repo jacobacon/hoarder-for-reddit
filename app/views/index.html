@@ -17,10 +17,6 @@
     <p>Export Saved Reddit Content to Various Formats</p>
 </div>
 
-<div class="alert alert-danger" hidden="true" id="alert">
-    <strong>Danger!</strong> This alert box could indicate a dangerous or potentially negative action.
-</div>
-
 <div id='root'></div>
 
 <!--
@@ -65,14 +61,20 @@
 </div>
 
 
-<div id="buttons">
-    <div class="container text-center">
 
-        <a id="logout-button" class="btn btn-default pull-left" onclick="logout()">Logout</a>
-        <a id="export-button" class="btn btn-default" onclick="exportContent()">Export</a>
-        <a id="settings-button" class="btn btn-default" onclick="downloadImages()">Download Images</a>
-        <a id='get-comments' class="pull-right btn btn-default" onclick="getContent()">Get Comments</a>
-</div>
+<div id="buttons" class="row mx-auto">
+        <div class="col-4 justify-content-start">
+            <a id="logout-button" class="btn btn-default pull-left" onclick="logout()">Logout</a>
+        </div>
+
+        <div class="col-4 justify-content-center">
+            <a id="export-button" class="btn btn-default" onclick="exportContent()">Export</a>
+            <a id="settings-button" class="btn btn-default" onclick="downloadImages()">Download Images</a>
+        </div>
+
+        <div class="col-4 justify-content-end">
+            <a id='get-comments' class="btn btn-default" onclick="getContent()">Get Comments</a>
+        </div>
 </div>
 
 

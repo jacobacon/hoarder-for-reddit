@@ -5,11 +5,6 @@
 const ipcRender = require('electron').ipcRenderer;
 const React = require('react');
 const ReactDOM = require('react-dom');
-
-
-
-
-
 ipcRender.on('set-comments', function (event, data) {
 
     console.log('Event Happened: ' + event);
@@ -54,6 +49,5 @@ function logout () {
 
 function downloadImages() {
     ipcRender.send('download-images');
-
 }
 

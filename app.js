@@ -143,7 +143,7 @@ ipcMain.on('get-comments', () => {
             content = data;
             mainWindow.webContents.send('set-comments', data);
 
-            console.log(data);
+            //console.log(data);
         }
 
     });
@@ -175,6 +175,8 @@ ipcMain.on('download-images', ()=> {
    }
 
    try {
+
+
        saver.download(urls, __dirname + '/downloads', (err, data) => {
            console.log(err);
            console.log(data);
