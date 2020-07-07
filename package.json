@@ -34,7 +34,7 @@
     "yargs": "^8.0.2"
   },
   "devDependencies": {
-    "electron": "8.2.2",
+    "electron": "9.1.0",
     "electron-rebuild": "^1.6.0",
     "gulp": "^3.9.1"
   }
